@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PN Store: Online Digital & Web Store</title>
+    <style>
+        * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+        body { margin: 0; background: #eaeded; color: #0f1111; overflow-x: hidden; }
+
+        @keyframes cardPopUp {
+            0% { opacity: 0; transform: translateY(25px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes btnShine {
+            0% { left: -75%; }
+            25% { left: 125%; }
+            100% { left: 125%; }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* AMAZON TOP HEADER */
+        .amz-header { background: #131921; color: #fff; padding: 8px 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .amz-logo { display: flex; align-items: baseline; text-decoration: none; color: #fff; padding: 4px 6px; border: 1px solid transparent; border-radius: 2px; transition: transform 0.2s; user-select: none; cursor: pointer; }
+        .amz-logo:hover { border-color: #fff; }
+        .amz-logo strong { font-size: 22px; letter-spacing: -0.5px; }
+        .amz-logo span { color: #ff9900; font-size: 22px; font-weight: bold; margin-left: 3px; }
+
+        .amz-deliver { display: none; font-size: 12px; line-height: 1.2; padding: 4px 6px; }
+        .amz-deliver span { color: #ccc; font-size: 11px; display: block; }
+        .amz-deliver strong { font-size: 13px; }
+        @media (min-width: 768px) { .amz-deliver { display: block; } }
+
+        /* Amazon Search Bar */
+        .amz-search { order: 3; width: 100%; display: flex; height: 40px; border-radius: 4px; overflow: hidden; }
+        .amz-search:focus-within { box-shadow: 0 0 0 3px #f90; }
+        .amz-search-cat { background: #e6e6e6; color: #555; border: none; border-right: 1px solid #cdcdcd; padding: 0 10px; font-size: 12px; outline: none; cursor: pointer; }
+        .amz-search input { flex: 1; border: none; padding: 0 12px; font-size: 14px; outline: none; }
+        .amz-search button { background: #febd69; border: none; width: 45px; cursor: pointer; font-size: 16px; }
+        .amz-search button:hover { background: #f3a847; }
+
+        @media (min-width: 768px) {
+            .amz-search { order: 2; width: auto; flex: 1; max-width: 680px; }
+            .header-actions { order: 3; }
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 6px; }
+        .lock-vault-btn { display: none; background: #dc2626; color: #fff; border: none; padding: 7px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .amz-account { background: transparent; color: #fff; border: 1px solid transparent; padding: 5px 8px; text-align: left; cursor: pointer; border-radius: 2px; }
+        .amz-account:hover { border-color: #fff; }
+        .amz-account span { display: block; font-size: 11px; color: #fff; }
+        .amz-account strong { font-size: 13px; color: #ff9900; }
+
+        /* AMAZON SUB-NAVBAR */
+        .amz-subnav { background: #232f3e; color: #fff; padding: 6px 14px; display: flex; align-items: center; gap: 6px; overflow-x: auto; font-size: 13px; }
+        .sub-btn { background: transparent; color: #fff; border: 1px solid transparent; padding: 5px 10px; border-radius: 2px; cursor: pointer; white-space: nowrap; font-size: 13px; }
+        .sub-btn:hover, .sub-btn.active { border-color: #fff; background: rgba(255,255,255,0.1); }
+        .sub-btn.all-menu { font-weight: bold; }
+
+        /* INDIAN FESTIVALS HERO CAROUSEL */
+        .hero-carousel { position: relative; overflow: hidden; height: 250px; }
+        .slides-track { display: flex; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .hero-slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 24px; text-align: center; color: #fff; }
+        
+        .fest-diwali { background: linear-gradient(180deg, #7c2d12 0%, #d97706 60%, #eaeded 100%); }
+        .fest-holi { background: linear-gradient(180deg, #831843 0%, #db2777 55%, #eaeded 100%); }
+        .fest-navratri { background: linear-gradient(180deg, #581c87 0%, #9333ea 60%, #eaeded 100%); }
+        .fest-eid { background: linear-gradient(180deg, #064e3b 0%, #059669 60%, #eaeded 100%); }
+        .fest-freedom { background: linear-gradient(180deg, #c2410c 0%, #1e3a8a 60%, #eaeded 100%); }
+        .fest-rakhi { background: linear-gradient(180deg, #991b1b 0%, #e11d48 60%, #eaeded 100%); }
+
+        .fest-top-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .hero-badge { background: #ffd814; color: #0f1111; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 14px; text-transform: uppercase; }
+        .off-tag { background: #cc0c39; color: #fff; font-size: 12px; font-weight: 900; padding: 4px 12px; border-radius: 14px; animation: pulseGlow 1.5s infinite; }
+
+        .hero-slide h1 { margin: 0 0 6px; font-size: 25px; font-weight: 800; text-shadow: 0 2px 6px rgba(0,0,0,0.45); padding: 0 40px; }
+        .hero-slide p { margin: 0; font-size: 14px; color: #f8fafc; padding: 0 40px; }
+
+        .carousel-arrow { position: absolute; top: 25px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.4); color: #fff; width: 36px; height: 75px; font-size: 22px; cursor: pointer; z-index: 20; border-radius: 4px; }
+        .arrow-left { left: 10px; }
+        .arrow-right { right: 10px; }
+
+        .carousel-dots { position: absolute; top: 145px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 20; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s; }
+        .dot.active { background: #ffd814; width: 20px; border-radius: 4px; }
+
+        /* PRODUCT GRID */
+        .container { max-width: 1360px; margin: -68px auto 30px; padding: 0 14px; position: relative; z-index: 15; }
+        
+        .deal-strip { background: #fff; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border-left: 5px solid #cc0c39; }
+        .deal-strip-title { font-size: 16px; font-weight: 800; color: #0f1111; display: flex; align-items: center; gap: 8px; }
+        .live-dot { width: 10px; height: 10px; background: #cc0c39; border-radius: 50%; display: inline-block; animation: pulseGlow 1.2s infinite; }
+        .deal-countdown { background: #cc0c39; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+
+        /* AMAZON PRODUCT CARD */
+        .amz-card { background: #fff; border: 1px solid #ddd; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; animation: cardPopUp 0.5s ease backwards; position: relative; }
+        .amz-card:hover { transform: translateY(-6px); box-shadow: 0 12px 24px rgba(0,0,0,0.14); border-color: #bbb; }
+        .amz-card.private-card { border: 2px solid #dc2626; }
+        .private-tag { position: absolute; top: 8px; right: 8px; background: #dc2626; color: #fff; font-size: 10px; font-weight: bold; padding: 3px 7px; border-radius: 4px; z-index: 5; }
+        
+        .card-img-wrap { background: #f7f7f7; height: 190px; display: flex; align-items: center; justify-content: center; padding: 12px; border-bottom: 1px solid #eee; overflow: hidden; }
+        .card-img-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; transition: transform 0.35s ease; }
+        .amz-card:hover .card-img-wrap img { transform: scale(1.07); }
+        
+        .card-body { padding: 14px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-cat { font-size: 11px; color: #565959; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+        .card-title { font-size: 15px; font-weight: 500; color: #0f1111; margin: 0 0 6px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .amz-card:hover .card-title { color: #c7511f; }
+
+        .amz-rating { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; font-size: 13px; }
+        .stars { color: #ffa41c; letter-spacing: 1px; font-size: 15px; }
+        .rating-count { color: #007185; font-size: 12px; }
+
+        .deal-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+        .deal-badge { background: #cc0c39; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 6px; border-radius: 2px; }
+        .deal-label { color: #cc0c39; font-size: 12px; font-weight: 700; }
+
+        .price-block { margin-bottom: 6px; }
+        .price-main { display: flex; align-items: flex-start; color: #0f1111; }
+        .price-symbol { font-size: 13px; margin-top: 3px; font-weight: 500; }
+        .price-whole { font-size: 26px; font-weight: 700; line-height: 1; }
+        .mrp-line { font-size: 12px; color: #565959; margin-top: 2px; }
+        .mrp-line span { text-decoration: line-through; }
+
+        .prime-row { font-size: 12px; color: #565959; margin-bottom: 12px; margin-top: auto; }
+        .prime-badge { color: #00a8e1; font-weight: 800; font-style: italic; }
+
+        .amz-btn { position: relative; overflow: hidden; width: 100%; background: #ffd814; border: 1px solid #fcd200; border-radius: 20px; padding: 9px 12px; font-size: 13px; font-weight: 600; color: #0f1111; cursor: pointer; text-align: center; }
+        .amz-btn:hover { background: #f7ca00; }
+        .amz-btn::after { content: ''; position: absolute; top: 0; left: -75%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: btnShine 3.5s infinite; }
+
+        /* EXTRA CATEGORY SHOWCASE */
+        .extra-section { max-width: 1360px; margin: 0 auto 25px; padding: 0 14px; }
+        .cat-showcase { background: #fff; padding: 20px; border-radius: 6px; border: 1px solid #ddd; }
+        .cat-showcase h3 { margin: 0 0 15px; font-size: 18px; color: #0f1111; }
+        .cat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+        .cat-tile { background: #f7fafa; border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.25s ease; }
+        .cat-tile:hover { background: #fff; transform: translateY(-4px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); border-color: #ff9900; }
+        .cat-icon { font-size: 28px; margin-bottom: 8px; display: inline-block; animation: floatSlow 3s ease-in-out infinite; }
+        .cat-tile strong { display: block; font-size: 14px; color: #0f1111; margin-bottom: 4px; }
+        .cat-tile span { font-size: 12px; color: #007185; }
+
+        /* ADMIN PANEL */
+        .admin-container { max-width: 600px; margin: 25px auto; padding: 0 14px; animation: cardPopUp 0.4s ease; }
+        .seller-box { background: #fff; border: 1px solid #d5d9d9; border-radius: 8px; padding: 20px; }
+        .seller-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e7e7e7; padding-bottom: 10px; margin-bottom: 15px; }
+        .seller-header h2 { margin: 0; font-size: 19px; font-weight: 600; }
+        .logout-admin-btn { background: #dc2626; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #0f1111; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #888c8c; border-radius: 4px; font-size: 14px; outline: none; }
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .auto-preview { background: #f0f2f2; border: 1px solid #d5d9d9; padding: 8px 12px; border-radius: 4px; font-size: 13px; margin-bottom: 14px; display: flex; justify-content: space-between; }
+        .amz-submit { width: 100%; background: #ffd814; border: 1px solid #fcd200; border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .amz-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .manage-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #d5d9d9; border-radius: 4px; margin-top: 8px; background: #fff; }
+        .del-btn { background: #fff; border: 1px solid #d5d9d9; color: #0f1111; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .del-btn:hover { border-color: #cc0c39; color: #cc0c39; }
+
+        /* FOOTER */
+        .back-to-top { background: #37475a; color: #fff; text-align: center; padding: 14px; font-size: 13px; cursor: pointer; }
+        .amz-footer { background: #232f3e; color: #ddd; padding: 25px 15px; text-align: center; font-size: 12px; }
+
+        /* MODALS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 17, 17, 0.85); z-index: 999; justify-content: center; align-items: center; padding: 15px; }
+        .gateway-box { background: #fff; width: 100%; max-width: 380px; border-radius: 8px; border: 1px solid #d5d9d9; overflow: hidden; text-align: center; animation: cardPopUp 0.25s ease-out; }
+        .gw-header { background: #232f3e; color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+        .gw-title { font-weight: 700; font-size: 14px; user-select: none; cursor: default; }
+        .gw-close { background: none; border: none; color: #ccc; font-size: 20px; cursor: pointer; }
+        .gw-body { padding: 20px; }
+        .gw-item-name { font-size: 14px; color: #565959; margin-bottom: 4px; }
+        .gw-amount { font-size: 26px; font-weight: 700; color: #b12704; margin-bottom: 14px; }
+        .qr-frame { border: 1px solid #d5d9d9; padding: 10px; border-radius: 6px; display: inline-block; background: #fff; margin-bottom: 10px; }
+        .qr-frame img { width: 185px; height: 185px; display: block; }
+        .upi-apps { font-size: 12px; color: #565959; margin-bottom: 14px; }
+        .timer-pill { background: #fef8f2; border: 1px solid #f0c14b; color: #c45500; padding: 7px 14px; border-radius: 4px; font-weight: 700; font-size: 13px; display: inline-block; margin-bottom: 12px; }
+        .gw-note { font-size: 12px; color: #565959; line-height: 1.4; margin: 0; }
+    </style>
+</head>
+<body>
+
+    <!-- AMAZON TOP HEADER -->
+    <header class="amz-header">
+        <!-- SECRET VAULT TRIGGER: Logo par 5 baar tap karne se Secret PIN box khulega -->
+        <div class="amz-logo" id="secret-vault-trigger">
+            <strong>PN</strong><span>Store</span>
+        </div>
+
+        <div class="amz-deliver">
+            <span>Delivering to</span>
+            <strong>📍 India (Cloud Live)</strong>
+        </div>
+
+        <div class="amz-search">
+            <select class="amz-search-cat" id="search-cat-select" onchange="filterFromSelect(this.value)">
+                <option value="All">All</option>
+                <option value="E-Commerce">E-Commerce</option>
+                <option value="Portfolio">Portfolio</option>
+                <option value="Tools & Apps">Tools & Apps</option>
+                <option value="Templates">Templates</option>
+            </select>
+            <input type="text" id="search-input" placeholder="Search PN Store" onkeyup="filterWebsites()">
+            <button onclick="filterWebsites()">🔍</button>
+        </div>
+
+        <div class="header-actions">
+            <button class="lock-vault-btn" id="lock-vault-btn" onclick="lockPrivateVault()">🔒 Lock Private</button>
+            <button class="amz-account" onclick="handleAdminClick()">
+                <span>Hello, Admin</span>
+                <strong id="mode-btn">Seller Panel ▾</strong>
+            </button>
+        </div>
+    </header>
+
+    <!-- AMAZON SUB-NAVBAR -->
+    <nav class="amz-subnav" id="category-bar">
+        <button class="sub-btn all-menu active" onclick="filterCategory('All', this)">☰ All</button>
+        <button class="sub-btn" onclick="filterCategory('E-Commerce', this)">E-Commerce</button>
+        <button class="sub-btn" onclick="filterCategory('Portfolio', this)">Portfolio</button>
+        <button class="sub-btn" onclick="filterCategory('Tools & Apps', this)">Tools & Apps</button>
+        <button class="sub-btn" onclick="filterCategory('Templates', this)">Templates</button>
+        <button class="sub-btn" onclick="filterCategory('All', this)">Great Indian Festival</button>
+    </nav>
+
+    <!-- STOREFRONT VIEW -->
+    <div id="store-view">
+        <div class="hero-carousel">
+            <button class="carousel-arrow arrow-left" onclick="moveSlide(-1)">‹</button>
+            <button class="carousel-arrow arrow-right" onclick="moveSlide(1)">›</button>
+            
+            <div class="slides-track" id="slides-track">
+                <div class="hero-slide fest-diwali">
+                    <div class="fest-top-row">
+                        <span class="hero-badge">🪔 Great Indian Diwali Sale</span>
+                        <span class="off-tag">UP TO 80% OFF</span>
+                    </div>
+                    <h1>Diwali Dhamaka Web & App Festival</h1>
+                    <p>Light up your digital presence with massive 80% discounts on PN Store</p>
+                </div>
+
+                <div class="hero-slide fest-holi">
+                    <div class="fest-top-row">
+                        <span class="hero-badge">🎨 Rangotsav Holi Special</span>
+                        <span class="off-tag">FLAT 80% OFF</span>
+                    </div>
+                    <h1>Splash of Colours & Mega Web Deals</h1>
+                    <p>Vibrant E-Commerce, Portfolio & UI templates at festive prices</p>
+                </div>
+
+                <div class="hero-slide fest-navratri">
+                    <div class="fest-top-row">
+                        <span class="hero-badge">🏹 Navratri & Dussehra Fest</span>
+                        <span class="off-tag">UP TO 80% OFF</span>
+                    </div>
+                    <h1>9 Days of Blockbuster Digital Offers</h1>
+                    <p>Celebrate victory with top-rated web tools and instant website links</p>
+                </div>
+
+                <div class="hero-slide fest-eid">
+                    <div class="fest-top-row">
+                        <span class="hero-badge">🌙 Eid-ul-Fitr Mega Sale</span>
+                        <span class="off-tag">UP TO 80% OFF</span>
+                    </div>
+                    <h1>Jashn-e-Eid Web & Digital Showcase</h1>
+                    <p>Special festive markdowns across all categories on PN Store</p>
+                </div>
+
+                <div class="hero-slide fest-freedom">
+                    <div class="fest-top-row">
+                        <span class="hero-badge">🇮🇳 Freedom & Republic Sale</span>
+                        <span class="off-tag">UP TO 80% OFF</span>
+                    </div>
+                    <h1>Proudly Made in India Web Projects</h1>
+                    <p>Empowering creators & businesses with up to 80% off on digital assets</p>
+                </div>
+
+                <div class="hero-slide fest-rakhi">
+                    <div class="fest-top-row">
+                        <span class="hero-badge">🧵 Raksha Bandhan Special</span>
+                        <span class="off-tag">UP TO 80% OFF</span>
+                    </div>
+                    <h1>Festive Gifting & Web Store Bonanza</h1>
+                    <p>Unbeatable deals on ready-to-launch web apps and custom sites</p>
+                </div>
+            </div>
+
+            <div class="carousel-dots" id="carousel-dots"></div>
+        </div>
+
+        <div class="container">
+            <div class="deal-strip">
+                <div class="deal-strip-title">
+                    <span class="live-dot"></span> Great Indian Festival Deals — Up to 80% OFF
+                </div>
+                <div class="deal-countdown" id="banner-deal-timer">Festival Ends in: 05h 42m 19s</div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="grid" id="product-grid"></div>
+        </div>
+
+        <div class="extra-section">
+            <div class="cat-showcase">
+                <h3>Shop by Web Category (Up to 80% OFF)</h3>
+                <div class="cat-cards">
+                    <div class="cat-tile" onclick="filterFromSelect('E-Commerce')">
+                        <span class="cat-icon">🛒</span>
+                        <strong>E-Commerce Stores</strong>
+                        <span>Up to 80% off ›</span>
+                    </div>
+                    <div class="cat-tile" onclick="filterFromSelect('Portfolio')">
+                        <span class="cat-icon">💼</span>
+                        <strong>Portfolio Sites</strong>
+                        <span>Up to 80% off ›</span>
+                    </div>
+                    <div class="cat-tile" onclick="filterFromSelect('Tools & Apps')">
+                        <span class="cat-icon">⚙️</span>
+                        <strong>Web Tools & Apps</strong>
+                        <span>Up to 80% off ›</span>
+                    </div>
+                    <div class="cat-tile" onclick="filterFromSelect('Templates')">
+                        <span class="cat-icon">🎨</span>
+                        <strong>UI Templates</strong>
+                        <span>Up to 80% off ›</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AMAZON SELLER / ADMIN PANEL (PASSWORD PROTECTED) -->
+    <div id="admin-view" style="display: none;">
+        <div class="admin-container">
+            <div class="seller-box">
+                <div class="seller-header">
+                    <h2>PN Store Seller Central</h2>
+                    <button class="logout-admin-btn" onclick="logoutAdmin()">🔒 Logout Admin</button>
+                </div>
+
+                <!-- SECURITY & UPI SETTINGS -->
+                <div style="background: #f7fafa; padding: 12px; border-radius: 6px; border: 1px solid #d5d9d9; margin-bottom: 18px;">
+                    <label style="font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px;">1. Cloud UPI ID Setup (Auto-Amount QR):</label>
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                        <input type="text" id="admin-upi-id" placeholder="e.g. yourname@okicici" style="flex:1; padding: 7px 10px; border: 1px solid #888c8c; border-radius: 4px;">
+                        <button onclick="saveUpiSettings()" style="background: #ffd814; border: 1px solid #fcd200; padding: 7px 14px; border-radius: 6px; font-weight: 600; cursor: pointer;">Save UPI</button>
+                    </div>
+
+                    <label style="font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px;">2. Change Admin Panel Password (Default: admin123):</label>
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                        <input type="password" id="new-admin-pass" placeholder="Naya Admin Password daalein" style="flex:1; padding: 7px 10px; border: 1px solid #888c8c; border-radius: 4px;">
+                        <button onclick="saveAdminPassword()" style="background: #232f3e; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-weight: 600; cursor: pointer;">Update Pass</button>
+                    </div>
+
+                    <label style="font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px;">3. Secret Vault PIN (Default: 1234):</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="password" id="admin-vault-pin" placeholder="Naya 4-digit PIN daalein" style="flex:1; padding: 7px 10px; border: 1px solid #888c8c; border-radius: 4px;">
+                        <button onclick="saveVaultPin()" style="background: #131921; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-weight: 600; cursor: pointer;">Set PIN</button>
+                    </div>
+                    <small style="color: #007600; display: block; margin-top: 8px;" id="cloud-status">● Connected to PN Store Firebase Cloud</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Visibility (Kaun dekh sakta hai?):</label>
+                    <select id="w-visibility" style="border: 2px solid #007185; font-weight: bold;">
+                        <option value="public">🌐 Public (Sabhi ko dikhega)</option>
+                        <option value="private">🔒 Private Vault (Sirf PIN daalne par mujhe dikhega)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Website Title / Name:</label>
+                    <input type="text" id="w-title" placeholder="e.g. Modern Clothing Store">
+                </div>
+
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Category:</label>
+                        <select id="w-cat">
+                            <option value="E-Commerce">E-Commerce</option>
+                            <option value="Portfolio">Portfolio</option>
+                            <option value="Tools & Apps">Tools & Apps</option>
+                            <option value="Templates">Templates</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Deal Tag (Optional):</label>
+                        <input type="text" id="w-badge" placeholder="Default: Great Indian Festival">
+                    </div>
+                </div>
+
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>M.R.P. (₹):</label>
+                        <input type="number" id="w-mrp" placeholder="e.g. 999" oninput="updateLiveDiscount()">
+                    </div>
+                    <div class="form-group">
+                        <label>Deal Price (₹):</label>
+                        <input type="text" id="w-price" placeholder="e.g. 499" oninput="updateLiveDiscount()">
+                    </div>
+                </div>
+
+                <div class="auto-preview">
+                    <span>Auto Discount Calculated:</span>
+                    <strong id="live-discount-preview" style="color: #cc0c39;">0% off</strong>
+                </div>
+
+                <div class="form-group">
+                    <label>Website Preview Image:</label>
+                    <input type="file" id="w-photo" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label>Target Website URL:</label>
+                    <input type="text" id="w-link" placeholder="https://...">
+                </div>
+
+                <button class="amz-submit" id="publish-btn" onclick="saveWebsite()">Save to Database & Publish</button>
+
+                <hr style="margin: 22px 0; border: 0; border-top: 1px solid #e7e7e7;">
+                <h3 style="font-size: 16px; margin-bottom: 10px;">Active Listings (Permanent + Cloud DB)</h3>
+                <div id="admin-items-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Back to top</div>
+    <footer class="amz-footer">
+        <strong>PN Store</strong> • Great Indian Festival Digital Store<br>
+        <span style="color: #999;">© 2026 PN Store — All rights reserved</span>
+    </footer>
+
+    <!-- ADMIN LOGIN PASSWORD MODAL -->
+    <div class="modal-overlay" id="admin-login-modal">
+        <div class="gateway-box" style="max-width: 330px;">
+            <div class="gw-header">
+                <span class="gw-title">🛡️ PN Store Admin Login</span>
+                <button class="gw-close" onclick="closeAdminLogin()">×</button>
+            </div>
+            <div class="gw-body">
+                <p style="font-size: 13px; color: #565959; margin-top: 0;">Seller Panel kholne ke liye Admin Password daalein:</p>
+                <input type="password" id="admin-pass-input" placeholder="Enter Admin Password" onkeyup="if(event.key==='Enter') verifyAdminPass()" style="width: 100%; padding: 10px; font-size: 15px; border: 1px solid #888c8c; border-radius: 4px; margin-bottom: 12px;">
+                <button class="amz-btn" onclick="verifyAdminPass()">Login to Seller Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECRET PIN UNLOCK MODAL -->
+    <div class="modal-overlay" id="pin-modal">
+        <div class="gateway-box" style="max-width: 320px;">
+            <div class="gw-header">
+                <span class="gw-title">🔐 Enter Secret Vault PIN</span>
+                <button class="gw-close" onclick="closePinModal()">×</button>
+            </div>
+            <div class="gw-body">
+                <p style="font-size: 13px; color: #565959; margin-top: 0;">Private items dekhne ke liye apna PIN daalein:</p>
+                <input type="password" id="vault-pin-input" placeholder="Enter PIN" onkeyup="if(event.key==='Enter') verifyVaultPin()" style="width: 100%; padding: 10px; font-size: 18px; text-align: center; letter-spacing: 4px; border: 1px solid #888c8c; border-radius: 4px; margin-bottom: 12px;">
+                <button class="amz-btn" onclick="verifyVaultPin()">Unlock Private Vault</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT GATEWAY MODAL -->
+    <div class="modal-overlay" id="gateway-modal">
+        <div class="gateway-box">
+            <div class="gw-header">
+                <span class="gw-title" id="secret-bypass">🔒 PN Store Pay / Verification</span>
+                <button class="gw-close" onclick="closeGateway()">×</button>
+            </div>
+            <div class="gw-body">
+                <div class="gw-item-name" id="gw-name">Website Name</div>
+                <div class="gw-amount" id="gw-price">₹499</div>
+                
+                <div class="qr-frame">
+                    <img id="gw-qr-img" src="" alt="Dynamic UPI QR Code">
+                </div>
+                
+                <div class="upi-apps">Scan using any UPI App (Amount Auto-Filled)</div>
+                
+                <div class="timer-pill">
+                    Redirecting in <span id="gw-timer">02:00</span>
+                </div>
+                
+                <p class="gw-note">Please wait while your session is verified. Your destination website will open automatically when the timer finishes.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE MODULE SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // AAPKA FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEGzEHs6nQb9DbBnse40idzfba1CTIXFA",
+            authDomain: "pn-store-b84ec.firebaseapp.com",
+            databaseURL: "https://pn-store-b84ec-default-rtdb.firebaseio.com",
+            projectId: "pn-store-b84ec",
+            storageBucket: "pn-store-b84ec.firebasestorage.app",
+            messagingSenderId: "654317852105",
+            appId: "1:654317852105:web:4859e26d6f0fb4a16dc418",
+            measurementId: "G-GKMZT0Q5E7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const websitesRef = ref(db, 'pnstore_listings');
+        const upiRef = ref(db, 'pnstore_settings/upiId');
+        const pinRef = ref(db, 'pnstore_settings/vaultPin');
+        const adminPassRef = ref(db, 'pnstore_settings/adminPass');
+
+        let isAdminViewOpen = false;
+        let isAdminAuthenticated = false;
+        let isPrivateUnlocked = false;
+        let currentCategory = 'All';
+        let countdownInterval = null;
+        let activeTargetLink = '';
+        let secretClickCount = 0;
+        let secretClickTimer = null;
+
+        let dbWebsites = [];
+        let currentCloudUpi = 'demo@upi';
+        let currentCloudPin = '1234';
+        let currentAdminPass = 'admin123'; // Default Admin Password
+
+        // 1. PERMANENT PUBLIC LISTING
+        const permanentListings = [
+            {
+                visibility: "public",
+                title: "Adminator Modern Admin Dashboard UI Template",
+                category: "Templates",
+                badge: "Great Indian Festival",
+                price: "499",
+                mrp: "999",
+                photo: "https://raw.githubusercontent.com/puikinsh/Adminator-admin-dashboard/master/assets/static/images/adminator-preview.png",
+                fallbackPhoto: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
+                link: "https://github.com/puikinsh/Adminator-admin-dashboard"
+            }
+        ];
+
+        // 2. FIREBASE REALTIME LISTENERS
+        onValue(websitesRef, (snapshot) => {
+            dbWebsites = [];
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach((key) => {
+                    dbWebsites.unshift({ id: key, ...data[key] });
+                });
+            }
+            renderAll();
+        }, () => {
+            document.getElementById('cloud-status').innerText = "⚠️ Database Error: Firebase Rules check karein";
+            document.getElementById('cloud-status').style.color = "#cc0c39";
+            renderAll();
+        });
+
+        onValue(upiRef, (snapshot) => {
+            if (snapshot.exists()) {
+                currentCloudUpi = snapshot.val();
+                document.getElementById('admin-upi-id').value = currentCloudUpi;
+            }
+        });
+
+        onValue(pinRef, (snapshot) => {
+            if (snapshot.exists()) currentCloudPin = snapshot.val();
+        });
+
+        onValue(adminPassRef, (snapshot) => {
+            if (snapshot.exists()) currentAdminPass = snapshot.val();
+        });
+
+        // ADMIN PASSWORD LOGIN LOGIC
+        window.handleAdminClick = function() {
+            if (isAdminViewOpen) {
+                switchAdminView(false);
+                return;
+            }
+            if (isAdminAuthenticated) {
+                switchAdminView(true);
+            } else {
+                document.getElementById('admin-pass-input').value = '';
+                document.getElementById('admin-login-modal').style.display = 'flex';
+                document.getElementById('admin-pass-input').focus();
+            }
+        };
+
+        window.closeAdminLogin = function() {
+            document.getElementById('admin-login-modal').style.display = 'none';
+        };
+
+        window.verifyAdminPass = function() {
+            const entered = document.getElementById('admin-pass-input').value;
+            if (entered === currentAdminPass) {
+                isAdminAuthenticated = true;
+                window.closeAdminLogin();
+                switchAdminView(true);
+            } else {
+                alert("❌ Galat Admin Password!");
+            }
+        };
+
+        window.logoutAdmin = function() {
+            isAdminAuthenticated = false;
+            switchAdminView(false);
+            alert("Admin Panel Locked!");
+        };
+
+        function switchAdminView(showAdmin) {
+            isAdminViewOpen = showAdmin;
+            document.getElementById('store-view').style.display = showAdmin ? 'none' : 'block';
+            document.getElementById('category-bar').style.display = showAdmin ? 'none' : 'flex';
+            document.getElementById('admin-view').style.display = showAdmin ? 'block' : 'none';
+            document.getElementById('mode-btn').innerText = showAdmin ? '← Back to Store' : 'Seller Panel ▾';
+            renderAll();
+        }
+
+        window.saveAdminPassword = function() {
+            const newPass = document.getElementById('new-admin-pass').value.trim();
+            if (newPass.length < 4) {
+                alert("Kam se kam 4 characters ka password daalein!");
+                return;
+            }
+            set(adminPassRef, newPass)
+                .then(() => {
+                    document.getElementById('new-admin-pass').value = '';
+                    alert("Naya Admin Password save ho gaya!");
+                })
+                .catch(() => alert("Error: Database permission check karein."));
+        };
+
+        // LOGO 5-TAP SECRET VAULT TRIGGER
+        let logoTapCount = 0;
+        let logoTapTimer = null;
+        document.getElementById('secret-vault-trigger').addEventListener('click', function() {
+            if (isAdminViewOpen) {
+                switchAdminView(false);
+                return;
+            }
+            logoTapCount++;
+            clearTimeout(logoTapTimer);
+            if (logoTapCount === 5) {
+                logoTapCount = 0;
+                if (!isPrivateUnlocked) {
+                    document.getElementById('vault-pin-input').value = '';
+                    document.getElementById('pin-modal').style.display = 'flex';
+                    document.getElementById('vault-pin-input').focus();
+                } else {
+                    window.lockPrivateVault();
+                }
+            } else {
+                logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 1200);
+            }
+        });
+
+        window.closePinModal = function() {
+            document.getElementById('pin-modal').style.display = 'none';
+        };
+
+        window.verifyVaultPin = function() {
+            const enteredPin = document.getElementById('vault-pin-input').value;
+            if (enteredPin === currentCloudPin) {
+                isPrivateUnlocked = true;
+                window.closePinModal();
+                document.getElementById('lock-vault-btn').style.display = 'inline-block';
+                renderAll();
+                alert("🔓 Private Vault Unlocked!");
+            } else {
+                alert("❌ Galat PIN!");
+            }
+        };
+
+        window.lockPrivateVault = function() {
+            isPrivateUnlocked = false;
+            document.getElementById('lock-vault-btn').style.display = 'none';
+            renderAll();
+        };
+
+        window.saveVaultPin = function() {
+            const newPin = document.getElementById('admin-vault-pin').value.trim();
+            if (newPin.length < 4) {
+                alert("Kam se kam 4 digit ka PIN daalein!");
+                return;
+            }
+            set(pinRef, newPin)
+                .then(() => {
+                    document.getElementById('admin-vault-pin').value = '';
+                    alert("Naya Secret PIN save ho gaya!");
+                })
+                .catch(() => alert("Error: Database permission check karein."));
+        };
+
+        // CAROUSEL SLIDER
+        let currentSlide = 0;
+        const totalSlides = 6;
+        const dotsContainer = document.getElementById('carousel-dots');
+
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => window.goToSlide(i);
+            dotsContainer.appendChild(dot);
+        }
+
+        window.goToSlide = function(index) {
+            currentSlide = index;
+            document.getElementById('slides-track').style.transform = `translateX(-${currentSlide * 100}%)`;
+            document.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === currentSlide));
+        };
+
+        window.moveSlide = function(dir) {
+            currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
+            window.goToSlide(currentSlide);
+        };
+
+        setInterval(() => window.moveSlide(1), 3500);
+
+        let bannerSecs = 20539;
+        setInterval(() => {
+            bannerSecs--;
+            const h = Math.floor(bannerSecs / 3600);
+            const m = Math.floor((bannerSecs % 3600) / 60);
+            const s = bannerSecs % 60;
+            const el = document.getElementById('banner-deal-timer');
+            if (el) el.innerText = `Festival Ends in: 0${h}h ${m < 10 ? '0'+m : m}m ${s < 10 ? '0'+s : s}s`;
+        }, 1000);
+
+        function calculateDiscountPercent(mrp, price) {
+            const m = parseFloat(mrp);
+            const p = parseFloat(price);
+            if (!isNaN(m) && m > 0) {
+                if (price.toString().toLowerCase() === 'free' || p === 0) return 100;
+                if (!isNaN(p) && m > p) return Math.round(((m - p) / m) * 100);
+            }
+            return 0;
+        }
+
+        window.updateLiveDiscount = function() {
+            const mrp = document.getElementById('w-mrp').value;
+            const price = document.getElementById('w-price').value.trim();
+            const percent = calculateDiscountPercent(mrp, price);
+            const previewEl = document.getElementById('live-discount-preview');
+            previewEl.innerText = percent > 0 ? `${percent}% off` : '0% off';
+            previewEl.style.color = percent > 0 ? '#cc0c39' : '#565959';
+        };
+
+        window.saveUpiSettings = function() {
+            const upi = document.getElementById('admin-upi-id').value.trim();
+            if (!upi || !upi.includes('@')) {
+                alert("Kripya sahi UPI ID daalein (jaise: name@okicici)");
+                return;
+            }
+            set(upiRef, upi)
+                .then(() => alert("UPI ID Firebase Database mein save ho gayi!"))
+                .catch(() => alert("Error: Database permission check karein."));
+        };
+
+        function compressImage(file, maxWidth, callback) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const scale = maxWidth / img.width;
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    callback(canvas.toDataURL('image/jpeg', 0.7));
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        window.saveWebsite = function() {
+            const visibility = document.getElementById('w-visibility').value;
+            const title = document.getElementById('w-title').value.trim();
+            const category = document.getElementById('w-cat').value;
+            const badge = document.getElementById('w-badge').value.trim() || "Great Indian Festival";
+            const price = document.getElementById('w-price').value.trim();
+            const mrp = document.getElementById('w-mrp').value.trim();
+            let link = document.getElementById('w-link').value.trim();
+            const fileInput = document.getElementById('w-photo');
+            const btn = document.getElementById('publish-btn');
+
+            if (!title || !price || !link || fileInput.files.length === 0) {
+                alert("Title, Deal Price, Image aur Website URL zaroori hain!");
+                return;
+            }
+
+            if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                link = 'https://' + link;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Saving to Firebase Cloud...";
+
+            compressImage(fileInput.files[0], 450, function(compressedPhoto) {
+                push(websitesRef, {
+                    visibility, title, category, badge, price, mrp,
+                    photo: compressedPhoto,
+                    link,
+                    createdAt: Date.now()
+                })
+                .then(() => {
+                    document.getElementById('w-title').value = '';
+                    document.getElementById('w-badge').value = '';
+                    document.getElementById('w-price').value = '';
+                    document.getElementById('w-mrp').value = '';
+                    document.getElementById('w-link').value = '';
+                    fileInput.value = '';
+                    window.updateLiveDiscount();
+
+                    alert(visibility === 'private' 
+                        ? "🔒 Private Vault mein save ho gaya!" 
+                        : "🌐 Public Store par live ho gaya!");
+                })
+                .catch(() => {
+                    alert("Database Error: Firebase Realtime Database Rules ko 'true' (Test Mode) par rakhein.");
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Save to Database & Publish";
+                });
+            });
+        };
+
+        window.deleteFromDb = function(firebaseKey) {
+            if (confirm("Kya aap is listing ko database se delete karna chahte hain?")) {
+                remove(ref(db, 'pnstore_listings/' + firebaseKey));
+            }
+        };
+
+        window.filterCategory = function(cat, btn) {
+            currentCategory = cat;
+            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            document.getElementById('search-cat-select').value = cat;
+            renderAll();
+        };
+
+        window.filterFromSelect = function(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.sub-btn').forEach(b => {
+                b.classList.toggle('active', b.innerText.includes(cat));
+            });
+            renderAll();
+            window.scrollTo({ top: 180, behavior: 'smooth' });
+        };
+
+        window.filterWebsites = function() {
+            renderAll();
+        };
+
+        window.openGateway = function(title, price, link) {
+            activeTargetLink = link;
+            document.getElementById('gw-name').innerText = title;
+            
+            const numericPrice = parseFloat(price.replace(/[^0-9.]/g, ''));
+            const isPaid = !isNaN(numericPrice) && numericPrice > 0;
+            document.getElementById('gw-price').innerText = isPaid ? `₹${numericPrice}` : price;
+
+            let upiLink = `upi://pay?pa=${encodeURIComponent(currentCloudUpi)}&pn=${encodeURIComponent('PN Store')}&cu=INR`;
+            if (isPaid) upiLink += `&am=${numericPrice}`;
+
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiLink)}`;
+            document.getElementById('gw-qr-img').src = qrApiUrl;
+
+            document.getElementById('gateway-modal').style.display = 'flex';
+
+            let timeLeft = 120;
+            updateTimerDisplay(timeLeft);
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay(timeLeft);
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    window.proceedToWebsite();
+                }
+            }, 1000);
+        };
+
+        function updateTimerDisplay(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            document.getElementById('gw-timer').innerText = 
+                `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        window.closeGateway = function() {
+            clearInterval(countdownInterval);
+            document.getElementById('gateway-modal').style.display = 'none';
+        };
+
+        window.proceedToWebsite = function() {
+            window.closeGateway();
+            window.open(activeTargetLink, '_blank');
+        };
+
+        document.getElementById('secret-bypass').addEventListener('click', function() {
+            secretClickCount++;
+            clearTimeout(secretClickTimer);
+            if (secretClickCount === 3) {
+                secretClickCount = 0;
+                window.proceedToWebsite();
+            } else {
+                secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 800);
+            }
+        });
+
+        function renderAll() {
+            const allList = [...permanentListings, ...dbWebsites];
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            const grid = document.getElementById('product-grid');
+            const adminList = document.getElementById('admin-items-list');
+
+            grid.innerHTML = '';
+            adminList.innerHTML = '';
+
+            // Render Admin Panel List
+            permanentListings.forEach(item => {
+                adminList.innerHTML += `
+                    <div class="manage-row" style="background: #f0f9ff; border-color: #bae6fd;">
+                        <div>
+                            <strong>${item.title}</strong> <span style="font-size:11px; background:#0284c7; color:#fff; padding:2px 6px; border-radius:4px;">Permanent</span><br>
+                            <small style="color:#565959;">${item.category} • ₹${item.price}</small>
+                        </div>
+                        <span style="font-size:12px; color:#0284c7; font-weight:bold;">Locked</span>
+                    </div>
+                `;
+            });
+
+            dbWebsites.forEach((item) => {
+                const isPriv = item.visibility === 'private';
+                adminList.innerHTML += `
+                    <div class="manage-row" style="${isPriv ? 'border-color:#fca5a5; background:#fef2f2;' : ''}">
+                        <div>
+                            <strong>${isPriv ? '🔒 ' : ''}${item.title}</strong> <span style="font-size:10px; background:#16a34a; color:#fff; padding:2px 5px; border-radius:3px;">Cloud</span><br>
+                            <small style="color:#565959;">${item.category} • ₹${item.price} • <b>${isPriv ? 'Private Vault' : 'Public'}</b></small>
+                        </div>
+                        <button class="del-btn" onclick="deleteFromDb('${item.id}')">Delete</button>
+                    </div>
+                `;
+            });
+
+            // Render Storefront Cards
+            let visibleIndex = 0;
+            allList.forEach((item) => {
+                if (item.visibility === 'private' && !isPrivateUnlocked) {
+                    return;
+                }
+
+                const autoDiscount = calculateDiscountPercent(item.mrp, item.price);
+                const matchesCat = currentCategory === 'All' || item.category === currentCategory;
+                const matchesSearch = item.title.toLowerCase().includes(searchQuery) || item.category.toLowerCase().includes(searchQuery);
+
+                if (matchesCat && matchesSearch) {
+                    const isNumericPrice = !isNaN(item.price);
+                    const priceHTML = isNumericPrice 
+                        ? `<div class="price-main"><span class="price-symbol">₹</span><span class="price-whole">${item.price}</span></div>`
+                        : `<div class="price-main"><span class="price-whole">${item.price}</span></div>`;
+
+                    const mrpHTML = item.mrp 
+                        ? `<div class="mrp-line">M.R.P.: <span>₹${item.mrp}</span></div>` 
+                        : '';
+
+                    const dealHTML = autoDiscount > 0 
+                        ? `<div class="deal-row"><span class="deal-badge">${autoDiscount}% off</span><span class="deal-label">${item.badge || 'Great Indian Festival'}</span></div>`
+                        : (item.badge ? `<div class="deal-row"><span class="deal-badge">${item.badge}</span></div>` : '');
+
+                    const isPriv = item.visibility === 'private';
+                    const privBadgeHTML = isPriv ? `<span class="private-tag">🔒 PRIVATE</span>` : '';
+                    const safeTitle = item.title.replace(/'/g, "\\'");
+                    const safePrice = item.price.replace(/'/g, "\\'");
+                    const safeLink = item.link.replace(/'/g, "\\'");
+                    const fallbackAttr = item.fallbackPhoto ? `onerror="this.src='${item.fallbackPhoto}'"` : '';
+                    const delay = visibleIndex * 0.08;
+                    visibleIndex++;
+
+                    grid.innerHTML += `
+                        <div class="amz-card ${isPriv ? 'private-card' : ''}" style="animation-delay: ${delay}s;">
+                            ${privBadgeHTML}
+                            <div class="card-img-wrap">
+                                <img src="${item.photo}" ${fallbackAttr} alt="${item.title}">
+                            </div>
+                            <div class="card-body">
+                                <div class="card-cat">${item.category}</div>
+                                <h3 class="card-title">${item.title}</h3>
+                                <div class="amz-rating">
+                                    <span class="stars">★★★★★</span>
+                                    <span class="rating-count">1,240</span>
+                                </div>
+                                ${dealHTML}
+                                <div class="price-block">
+                                    ${priceHTML}
+                                    ${mrpHTML}
+                                </div>
+                                <div class="prime-row">
+                                    <span class="prime-badge">✓prime</span> Instant Digital Access
+                                </div>
+                                <button class="amz-btn" onclick="openGateway('${safeTitle}', '${safePrice}', '${safeLink}')">Open Link</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (grid.innerHTML === '') {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; background:#fff; padding:20px; border-radius:4px;">No websites found matching your search.</p>';
+            }
+        }
+
+        renderAll();
+    </script>
+</body>
+</html>
